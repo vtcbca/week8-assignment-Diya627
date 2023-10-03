@@ -1,0 +1,89 @@
+#Program : 1 
+#Create CSV File for Product Selling for 6 Months and add at-least 5 Records for 5 different products. 
+#(Prod_Name, Jan ,Feb, Mar, Apr , May, Jun ) 
+#Create Python script to perform following task.
+
+import csv
+import pandas as pd
+import matplotlib.pyplot as plt
+
+header=['Prod_Name','Jan','Feb','Mar','Apr','May','Jun']
+values=[['mouse',9,19,17,10,3,12],['keyboard',80,120,110,20,60,28],['printer',30,40,9,58,51,81],['monitor',10,10,55,69,78,12],['pen drive',8,9,10,11,18,2]]
+
+f=open('c:\sqlite3\csv\product.csv','w',newline='') 
+w=csv.writer(f)
+w.writerow(header)
+w.writerows(values)
+
+f=open('c:\sqlite3\csv\product.csv','r')
+r=csv.reader(f)
+for i in r:
+print(i)
+
+#Read data in Dataframe. 
+df=pd.read_csv('c:\sqlite3\csv\product.csv')
+df
+
+#Add columns and calculate total_sell, average_sell. 
+df['total_sell']=df.iloc[:,1:].sum(axis=1)
+df['average_sell']=df['total_sell']/6
+df
+
+#Plot Total sell and average sell together on line chart with proper Legends, titles and lables. 
+plt.plot(df['Prod_Name'],df['total_sell'])
+plt.plot(df['Prod_Name'],df['average_sell'])
+plt.xlabel('Product Name')
+plt.ylabel('Product Sell')
+plt.title('Product Total And Average Sell')
+plt.legend(['Total sell','Average sell']);
+
+D. Explain final dataframe to csv named sell_analysis.csv
+df.to_csv('c:\sqlite\csv\sell_analysis.csv',index=False)
+
+
+
+#Program : 2 
+#Sales (sid, year, totalsales)
+#Create above table into a SQLite database with appropriate constraints. 
+
+import sqlite3
+import csv
+import matplotlib.pyplot as plt
+
+conn=sqlite3.connect('week8.db')
+cursor=conn.cursor()
+cursor.execute('''CREATE TABLE sales (sid INTEGER PRIMARY KEY,year INTEGER,totalsales INTEGER)''')
+
+
+#Insert at least 5-10 records into the sales table.
+data=[(1,2012,1000),(2,2013,200),(3,2014,800),(4,2015,5000),(5,2016,5200),(6,2017,2200),(7,2018,3300),(8,2019,10200),(9,2020,9000),(10,2021,70000)]
+
+cursor.executemany("INSERT INTO sales(sid,year,totalsales)",data)
+
+for i in cursor.execute("SELECT * FROM sales"):
+    print(i)
+
+conn.commit()
+conn.close()
+
+#Export sales table data into sales.csv file.
+f=("c:\sqlite3\csv\sales.csv",'w',newline='') 
+r=csv.writer(f)
+r.writerow(["sid","year","totalsales"])
+r.writerows(data)
+
+#Write a python scripts that read the sales.csv file and plot a bar chart that shows totalsales of the year. 
+Also decorate the chart with appropriate title, lables, colours etc.
+
+with open("c:\sqlite3\csv\sales.csv",'r',) as f:
+    r=csv.reader(f)
+    for i in r:
+        print(i)
+
+
+plt.figure(figsize=(10,7))
+plt.bar(df['year'],df['totalsales'],color='cyan')
+plt.xlabel('YEAR')
+plt.ylabel('TOTAL SELL')
+plt.title('Total Sell ')
+plt.xticks(df['year']);
